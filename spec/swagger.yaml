@@ -269,7 +269,7 @@ definitions:
       commandModuleID:
         description: ID of the Command Module.
         type: string
-        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+        example: '167e8bd3-7de9-4138-908c-2bf07facf8dc'
       commandModuleName:
         description: Name of the Command Module.
         type: string
@@ -301,11 +301,11 @@ definitions:
       createdAt:
         description: The Timestamp of the creation of the Command Module.
         type: string,
-        example: 2018-02-13 15:31:57.758
+        example: '2018-02-13 15:31:57.758'
       updatedAt:
         description: The Timestamp of the last update to the Command Module.
         type: string,
-        example: 2018-02-13 15:31:57.758
+        example: '2018-02-13 15:31:57.758'
 
   # MONITOR MODULE ENTITY
   MonitorModule:
@@ -314,14 +314,14 @@ definitions:
       monitorModuleID:
         description: ID of the Monitor Module.
         type: string
-        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+        example: '167e8bd3-7de9-4138-908c-2bf07facf8dc'
       monitorModuleName:
         description: Name of the Monitor Module.
         type: string
         example: Intelligent Routing
       monitorModuleSlug:
         description: Slug of the Monitor Module.
-        tyep: string
+        type: string
         example: WAN_CAPACITY
       monitorModuleEnabled:
         description: Whether or not the Monitor Module is enabled.
@@ -346,11 +346,11 @@ definitions:
       createdAt:
         description: The Timestamp of the creation of the Monitor Module.
         type: string,
-        example: 2018-02-13 15:31:57.758
+        example: '2018-02-13 15:31:57.758'
       updatedAt:
         description: The Timestamp of the last update to the Monitor Module.
         type: string,
-        example: 2018-02-13 15:31:57.758
+        example: '2018-02-13 15:31:57.758'
 
   Email:
     description: User email address
