@@ -6,7 +6,6 @@ swagger: '2.0'
 #   <schemes>://<host><basepath>
 schemes:
   - http # Remove if your API doesn't support HTTP
-  - https # Remove if your API donsn't support HTTPS
 host: example.com # Replace with your hostname. You can also specify port e.g. example.com:777
 basePath: /api/v1 # Replace with your basePath. Note: SHOULD begin with '/'.
 info:
@@ -31,35 +30,26 @@ info:
   # It can be any string but it is better to use semantic versioning: http://semver.org/
   # Warning: OpenAPI require version to be string, but without quotation YAML can recognize it as number.
 
-  title: Example.com # Replace with your API title
+  title: Nomad Total Command # Replace with your API title
   # Keep it simple. Don't add "API" or verison at the end of the string.
 
   termsOfService: 'https://example.com/terms/' # [Optional] Replace with an URL to your ToS
   contact:
-    email: contact@example.com # [Optional] Replace with your contact email
-    url: 'http://example.com/contact' # [Optional] Replace with link to your contact form
+    email: josh.rathke@nomadgcs.com # [Optional] Replace with your contact email
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   x-logo:
     url: 'https://apis.guru/openapi-template/logo.png'
+
 externalDocs:
   description: Find out how to create Github repo for your OpenAPI spec.
   url: 'https://github.com/Rebilly/generator-openapi-repo'
 produces:
-  # List of mime types your API endpoins can return.
-  # This is a global default. You can OVERWRITE it in each specific operation.
-  # Remove the ones not used in your API
   - application/json
-  - application/xml
-  - text/csv
   # you can add any mime type your API produces to the list
 consumes:
-  # List of mime types your API endpoins consumes.
-  # This is a global default. You can OVERWRITE it in each specific operation.
-  # Remove the ones not supported by your API
   - application/json
-  - application/xml
   # you can add any mime type your API consumes to the list
 
 # A list of tags used by the specification with additional metadata.
@@ -71,6 +61,8 @@ tags:
     description: Example echo operations
   - name: Interface Modules
     description: Interface Module Endpoints
+  - name: Logs
+    description: Log Endpoints
   - name: Monitor Modules
     description: Monitor Module Endpoints
 x-tagGroups:
@@ -82,6 +74,9 @@ x-tagGroups:
   - name: Control System Endpoints
     tags:
       - Echo
+  - name: Logging Endpoints
+    tags:
+      - Logs
 
 # Holds the relative paths to the individual endpoints. The path is appended to the
 # basePath in order to construct the full URL. 
@@ -207,6 +202,30 @@ paths:
         '500':
           description: Server Error
 
+  '/logs':
+    parameters:
+      - in: query
+        name: logID
+        description: ID of the targeted Log.
+        type: string
+    get:
+      tags:
+        - Logs
+      summary: GET Logs
+      description: Get Logs that match the provided query.
+      operationId: getLogs
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Log'
+        '500':
+          description: Server Error
+
 # An object to hold data types that can be consumed and produced by operations.
 # These data types can be primitives, arrays or models.
 definitions:
@@ -300,3 +319,16 @@ definitions:
         description: The Timestamp of the last update to the Monitor Module.
         type: string
         example: '2018-02-13 15:31:57.758'
+
+  # LOGS ENTITY
+  Log:
+    type: object
+    properties:
+      logID:
+        description: ID of the Log.
+        type: string,
+        example: '5d62ea24-a787-45f4-840a-9696d9a2010e'
+      logActorType:
+        description: Actor Type of the Log.
+        type: string,
+        example: web-client
