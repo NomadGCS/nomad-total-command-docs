@@ -83,24 +83,6 @@ x-tagGroups:
     tags:
       - Echo
 
-# Security scheme definitions that can be used across the specification.
-securityDefinitions:
-  main_auth: # security definition name (you can name it as you want)
-    type: oauth2 # authorization type, one of: oauth2, basic, apiKey
-    # the following options are specific to oauth2 type
-    authorizationUrl: 'http://example.com/api/oauth/dialog'
-    flow: implicit
-    scopes:
-      'read:users': read users info
-      'write:users': modify or remove users
-  api_key: # security definition name (you can name it as you want)
-    type: apiKey
-    # The following options are specific to apiKey type
-    in: header # Where API key will be passed: header or query
-    name: api_key # API key paramteer name
-  basic_auth: # security definition name (you can name it as you want)
-    type: basic
-
 # Holds the relative paths to the individual endpoints. The path is appended to the
 # basePath in order to construct the full URL. 
 paths:
@@ -351,29 +333,3 @@ definitions:
         description: The Timestamp of the last update to the Monitor Module.
         type: string
         example: '2018-02-13 15:31:57.758'
-
-  Email:
-    description: User email address
-    type: string
-    format: email
-    example: john.smith@example.com
-  User:
-    type: object
-    properties:
-      username:
-        description: User supplied username
-        type: string
-        minLength: 4
-        example: John78
-      firstName:
-        description: User first name
-        type: string
-        minLength: 1
-        example: John
-      lastName:
-        description: User last name
-        type: string
-        minLength: 1
-        example: Smith
-      email:
-        $ref: '#/definitions/Email'
