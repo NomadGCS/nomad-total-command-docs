@@ -139,10 +139,7 @@ paths:
       - in: query
         name: commandModuleSlugs
         description: Slugs of the targeted Command Modules.
-        schema:
-          type: array
-          items: 
-            type: string
+        type: string
       - in: query
         name: commandNodeCompatible
         description: Whether the targeted Command Modules are Command Node Compatible.
@@ -203,10 +200,7 @@ paths:
       - in: query
         name: monitorModuleSlugs
         description: Slugs of the targeted Monitor Modules.
-        schema:
-          type: array
-          items: 
-            type: string
+        type: string
       - in: query
         name: commandNodeCompatible
         description: Whether the targeted Monitor Modules are Command Node Compatible.
