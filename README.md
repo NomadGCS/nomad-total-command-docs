@@ -17,6 +17,7 @@
 ## Links
 
 - Documentation(ReDoc): https://nomadgcs.github.io/nomad-total-command-docs/
+- SwaggerUI: https://nomadgcs.github.io/nomad-total-command-docs/swagger-ui/
 - Look full spec:
     + JSON https://nomadgcs.github.io/nomad-total-command-docs/swagger.json
     + YAML https://nomadgcs.github.io/nomad-total-command-docs/swagger.yaml

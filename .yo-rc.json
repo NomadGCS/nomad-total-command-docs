@@ -4,7 +4,7 @@
     "name": "Nomad Total Command",
     "repo": "NomadGCS/nomad-total-command-docs",
     "splitSpec": false,
-    "samples": false,
-    "installSwaggerUI": false
+    "samples": true,
+    "installSwaggerUI": true
   }
 }
