@@ -326,9 +326,9 @@ definitions:
     properties:
       logID:
         description: ID of the Log.
-        type: string,
+        type: string
         example: '5d62ea24-a787-45f4-840a-9696d9a2010e'
       logActorType:
         description: Actor Type of the Log.
-        type: string,
+        type: string
         example: web-client
