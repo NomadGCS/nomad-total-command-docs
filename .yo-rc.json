@@ -1,0 +1,10 @@
+{
+  "generator-openapi-repo": {
+    "importExistingSpec": false,
+    "name": "Nomad Total Command",
+    "repo": "NomadGCS/nomad-total-command-docs",
+    "splitSpec": true,
+    "samples": false,
+    "installSwaggerUI": true
+  }
+}
