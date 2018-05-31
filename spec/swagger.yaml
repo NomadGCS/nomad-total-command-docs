@@ -65,10 +65,24 @@ consumes:
 # A list of tags used by the specification with additional metadata.
 # The order of the tags can be used to reflect on their order by the parsing tools.
 tags:
+  - name: Command Modules
+    description: Command Module Endpoints
   - name: Echo
     description: Example echo operations
-  - name: User
-    description: Operations about user
+  - name: Interface Modules
+    description: Interface Module Endpoints
+  - name: Monitor Modules
+    description: Monitor Module Endpoints
+x-tagGroups:
+  - name: Interface Module Endpoints
+    tags:
+      - Interface Modules
+      - Command Modules
+      - Monitor Modules
+  - name: Control System Endpoints
+    tags:
+      - Echo
+
 # Security scheme definitions that can be used across the specification.
 securityDefinitions:
   main_auth: # security definition name (you can name it as you want)
@@ -90,98 +104,126 @@ securityDefinitions:
 # Holds the relative paths to the individual endpoints. The path is appended to the
 # basePath in order to construct the full URL. 
 paths:
-  '/users/{username}': # path parameter in curly braces
-    # documentation for GET operation for this path
-    
-    # parameters list that are used with each operation for this path
+  '/interface-modules/command-modules/{commandModuleID}':
     parameters:
-      - name: pretty_print
-        in: query # place where paramter is passed: path, header, query or body, formData
-        description: Pretty print response
-        # type of the paramter: string, number, integer, boolean, array
-        type: boolean
+      - in: path
+        name: commandModuleID
+        description: ID of the Target Command Module
+        required: true
+        type: string
     get:
       tags:
-        - User
-      
-      # summary is up to 120 symbold but we recommend to be shortest as possible
-      summary: Get user by user name
-      
-      # you can use GFM in operation description too: https://guides.github.com/features/mastering-markdown
-      description: | 
-        Some description of the operation. 
-        You can use `markdown` here.
-      
-      # operationId should be unique across the whole specification
-      operationId: getUserByName
-      
-      # list of parameters for the operation
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched'
-          required: true
-          type: string
-        - name: with_email
-          in: query
-          description: Filter users without email
-          type: boolean
-      
-      # security schemas applied to this operation
-      security:
-        - main_auth:
-          - 'read:users' # for auth2 provide list of scopes here
-        - api_key: []
-      # overwriting default global produces
+        - Command Modules
+      summary: GET Command Module
+      description: Get a Command Module by the Command Module ID.
+      operationId: getCommandModuleByID
       produces:
         - application/json
-      responses: # list of responses
+      responses:
         '200':
           description: Success
-          schema: # response schema can be specified for each response
-            $ref: '#/definitions/User'
-          examples:
-          # repsonse samples for each type operation produces
-            application/json:
-              username: user1
-              email: user@example.com
+          schema:
+            $ref: '#/definitions/CommandModule'
         '403':
           description: Forbidden
         '404':
           description: User not found
-    # documentation for PUT operation for this path
-    put:
+        '500':
+          description: Server Error
+  '/interface-modules/command-modules/':
+    parameters:
+      - in: query
+        name: commandModuleID
+        description: ID of the targeted Command Module.
+        type: string
+      - in: query
+        name: commandModuleSlugs
+        description: Slugs of the targeted Command Modules.
+        type: array[string]
+      - in: query
+        name: commandNodeCompatible
+        description: Whether the targeted Command Modules are Command Node Compatible.
+        type: boolean
+    get:
       tags:
-        - User
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
+        - Command Modules
+      summary: GET Command Modules
+      description: Get Command Modules that match the provided query.
+      operationId: getCommandModules
       produces:
         - application/json
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be updated
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Updated user object
-          required: true
-          # for body parameter you should specify request schema instead of type
-          schema:
-            $ref: '#/definitions/User'
-      security:
-        - main_auth:
-          - 'write:users'
       responses:
         '200':
-          description: OK
-        '400':
-          description: Invalid user supplied
-        '404':
-          description: User not found
-  
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CommandModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+
+  # Get Monitor Module
+  '/interface-modules/monitor-modules/{monitorModuleID}':
+    parameters:
+      - in: query
+        name: monitorModuleID
+        description: ID of the targeted Monitor Module.
+        required: true
+        type: string
+    get:
+      tags:
+        - Monitor Modules
+      summary: GET Monitor Module
+      description: Get a Monitor Module by the Monitor Module ID.
+      operationId: getMonitorModule
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/MonitorModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+
+  # Get Monitor Modules        
+  '/interface-modules/monitor-modules/':
+    parameters:
+      - in: query
+        name: monitorModuleID
+        description: ID of the targeted Monitor Module.
+        type: string
+      - in: query
+        name: monitorModuleSlugs
+        description: Slugs of the targeted Monitor Modules.
+        type: array[string]
+      - in: query
+        name: commandNodeCompatible
+        description: Whether the targeted Monitor Modules are Command Node Compatible.
+        type: boolean
+    get:
+      tags:
+        - Monitor Modules
+      summary: GET Monitor Modules
+      description: Get Monitor Modules that match the provided query.
+      operationId: getMonitorModules
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MonitorModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
   '/echo':
     post:
       tags:
@@ -219,6 +261,97 @@ paths:
 # An object to hold data types that can be consumed and produced by operations.
 # These data types can be primitives, arrays or models.
 definitions:
+
+  # COMMAND MODULE ENTITY
+  CommandModule:
+    type: object
+    properties:
+      commandModuleID:
+        description: ID of the Command Module.
+        type: string
+        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+      commandModuleName:
+        description: Name of the Command Module.
+        type: string
+        example: Intelligent Routing
+      commandModuleSlug:
+        description: Slug of the Command Module.
+        type: string
+        example: INTELLIGENT_ROUTING
+      commandModuleEnabled:
+        description: Whether or not the Command Module is enabled.
+        type: boolean
+        example: true
+      commandModuleComponent:
+        description: Angular Component name of the Command Module.
+        type: string
+        example: IntelligentRoutingCommandModuleComponent
+      commandNodeCompatible:
+        description: Whether or not the Command Module is Command Node Compatible.
+        type: boolean
+        example: true
+      commandLockEligible:
+        description: Whether or not the Command Module is Eligible for Command Lock.
+        type: boolean
+        example: true
+      featureSetID:
+        description: The ID of the Feature Set that the Command Module belongs to.
+        type: string,
+        example: c5fae649-5fc0-4a60-82a9-93bc4955f354
+      createdAt:
+        description: The Timestamp of the creation of the Command Module.
+        type: string,
+        example: 2018-02-13 15:31:57.758
+      updatedAt:
+        description: The Timestamp of the last update to the Command Module.
+        type: string,
+        example: 2018-02-13 15:31:57.758
+
+  # MONITOR MODULE ENTITY
+  MonitorModule:
+    type: object
+    properties:
+      monitorModuleID:
+        description: ID of the Monitor Module.
+        type: string
+        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+      monitorModuleName:
+        description: Name of the Monitor Module.
+        type: string
+        example: Intelligent Routing
+      monitorModuleSlug:
+        description: Slug of the Monitor Module.
+        tyep: string
+        example: WAN_CAPACITY
+      monitorModuleEnabled:
+        description: Whether or not the Monitor Module is enabled.
+        type: boolean
+        example: true
+      monitorModuleComponent:
+        description: Angular Component name of the Monitor Module.
+        type: string
+        example: WANCapacityMonitorModuleComponent
+      commandNodeCompatible:
+        description: Whether or not the Monitor Module is Monitor Node Compatible.
+        type: boolean
+        example: true
+      commandLockEligible:
+        description: Whether or not the Monitor Module is Eligible for Monitor Lock.
+        type: boolean
+        example: true
+      featureSetID:
+        description: The ID of the Feature Set that the Monitor Module belongs to.
+        type: string,
+        example: c5fae649-5fc0-4a60-82a9-93bc4955f354
+      createdAt:
+        description: The Timestamp of the creation of the Monitor Module.
+        type: string,
+        example: 2018-02-13 15:31:57.758
+      updatedAt:
+        description: The Timestamp of the last update to the Monitor Module.
+        type: string,
+        example: 2018-02-13 15:31:57.758
+
   Email:
     description: User email address
     type: string
