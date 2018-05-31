@@ -296,15 +296,15 @@ definitions:
         example: true
       featureSetID:
         description: The ID of the Feature Set that the Command Module belongs to.
-        type: string,
+        type: string
         example: c5fae649-5fc0-4a60-82a9-93bc4955f354
       createdAt:
         description: The Timestamp of the creation of the Command Module.
-        type: string,
+        type: string
         example: '2018-02-13 15:31:57.758'
       updatedAt:
         description: The Timestamp of the last update to the Command Module.
-        type: string,
+        type: string
         example: '2018-02-13 15:31:57.758'
 
   # MONITOR MODULE ENTITY
@@ -341,15 +341,15 @@ definitions:
         example: true
       featureSetID:
         description: The ID of the Feature Set that the Monitor Module belongs to.
-        type: string,
+        type: string
         example: c5fae649-5fc0-4a60-82a9-93bc4955f354
       createdAt:
         description: The Timestamp of the creation of the Monitor Module.
-        type: string,
+        type: string
         example: '2018-02-13 15:31:57.758'
       updatedAt:
         description: The Timestamp of the last update to the Monitor Module.
-        type: string,
+        type: string
         example: '2018-02-13 15:31:57.758'
 
   Email:
