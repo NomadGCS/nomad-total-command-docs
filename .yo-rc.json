@@ -3,8 +3,8 @@
     "importExistingSpec": false,
     "name": "Nomad Total Command",
     "repo": "NomadGCS/nomad-total-command-docs",
-    "splitSpec": true,
+    "splitSpec": false,
     "samples": false,
-    "installSwaggerUI": true
+    "installSwaggerUI": false
   }
 }
