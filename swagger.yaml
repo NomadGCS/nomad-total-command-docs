@@ -1,0 +1,324 @@
+swagger: '2.0'
+schemes:
+  - http
+host: example.com
+basePath: /api/v1
+info:
+  description: |
+    This is an **example** API to demontstrate features of OpenAPI specification
+    # Introduction
+    This specification is intended to to be a good starting point for describint your API in 
+    [OpenAPI/Swagger format](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md).
+    It also demonstrates features of [generator-openapi-repo](https://github.com/Rebilly/generator-openapi-repo) tool and 
+    [ReDoc](https://github.com/Rebilly/ReDoc) documentation engine. So beyond the standard OpenAPI syntax we use a few 
+    [vendor extensions](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md).
+
+    # Websockets
+    The NTC Controller uses Websockets extensively to provide real-time data regarding the state of the System, Users, and Control Systems within the vehicle. Due to its ability to use various protocols, and reconnect without user intervention, the [Socket.IO](https://socket.io/) framework is used to construct the websocket server. Clients wishing to connect to the Websockets hosted within NTC will benefit greatly from also using the [Socket.IO](https://socket.io/) framework to construct their Websocket Clients.
+
+    The Websocket Server setup by the NTC Controller follows a strict a "push only" model. This means that subscribers to the sockets can only recieve the data being transmitted over the socket, none of which is sensitive, and likewise none of which can be used to perform any Authentication/Authorization transactions within the API. The Websocket Server is not setup to allow Clients to push information of any kind, nor will it respond to information provided by Clients.
+
+    ## Switch Socket
+    ```
+    /switch/{SocketID}
+    ```
+    Switch Sockets are designed to exist only when needed. They provide a fast, scalable, and relatively well obscured (from a security perspective) way of piping direct, time sensitive user input into the NTC Controller. The Controller uses these Sockets to observe user input such as Moment Switch depressions. These sockets are built and deployed by the NTC Controller after certain API calls have been Authenticated, Authorized, and processed then listens to the transmissions for input. Once input ceases the socket is torn down and discarded.
+
+    For the most part, these sockets are not accessible beyond being used at the time of an event such as a moment switch depression.
+
+    ## System Settings Socket
+    ```
+    /system-settings
+    ```
+    ### Message Emissions
+    `system-settings` - A compressed and formatted digest of the System Settings in their current state. This socket does not provide any means of changing the provided System Settings.
+
+    ## User Socket
+    ```
+    /users/{UserID}
+    ```
+    User Sockets are used to transmit useful data about individual users. These sockets are built by the NTC Controller at runtime and are maintained throughout the lifecycle of the application.
+    ### Message Emissions
+    `user-object` - The User Entity as it currently sits in the Database. This is emitted on connection, along with anytime the User Entity is updated.
+
+    `user-permissions` - The User Permissions message subject provides an array of user permissions for the owner of the User Socket. These permissions can be used to affect the display of content such as buttons and features depending on which permissions the user has. **Important Note** - Permissions are verfied at the runtime of each API Request directly from the database, so this message provides a "read-only" view into a particular User's Permissions at a given moment in time. 
+    ### Transmission Endpoints
+    `user-keepalive` - The User Keepalive endpoint allows an application to inform the NTC Controller of a User's current status. The controller will listen for User Keepalives and mark the User as "Online" until 10 seconds have elapsed from the time of the last User Keepalive. The Online Status of the User is Logged upon change, and is represented as a message accessible within the 'Users Socket'.'
+  version: 1.0.0
+  title: Nomad Total Command
+  termsOfService: 'https://example.com/terms/'
+  contact:
+    email: josh.rathke@nomadgcs.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  x-logo:
+    url: 'https://apis.guru/openapi-template/logo.png'
+externalDocs:
+  description: Find out how to create Github repo for your OpenAPI spec.
+  url: 'https://github.com/Rebilly/generator-openapi-repo'
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: Command Modules
+    description: Command Module Endpoints
+  - name: Echo
+    description: Example echo operations
+  - name: Interface Modules
+    description: Interface Module Endpoints
+  - name: Logs
+    description: Log Endpoints
+  - name: Monitor Modules
+    description: Monitor Module Endpoints
+x-tagGroups:
+  - name: Interface Module Endpoints
+    tags:
+      - Interface Modules
+      - Command Modules
+      - Monitor Modules
+  - name: Control System Endpoints
+    tags:
+      - Echo
+  - name: Logging Endpoints
+    tags:
+      - Logs
+paths:
+  '/interface-modules/command-modules/{commandModuleID}':
+    parameters:
+      - in: path
+        name: commandModuleID
+        description: ID of the Target Command Module
+        required: true
+        type: string
+    get:
+      tags:
+        - Command Modules
+      summary: GET Command Module
+      description: Get a Command Module by the Command Module ID.
+      operationId: getCommandModuleByID
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CommandModule'
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+        '500':
+          description: Server Error
+  /interface-modules/command-modules/:
+    parameters:
+      - in: query
+        name: commandModuleID
+        description: ID of the targeted Command Module.
+        type: string
+      - in: query
+        name: commandModuleSlugs
+        description: Slugs of the targeted Command Modules.
+        type: string
+      - in: query
+        name: commandNodeCompatible
+        description: Whether the targeted Command Modules are Command Node Compatible.
+        type: boolean
+    get:
+      tags:
+        - Command Modules
+      summary: GET Command Modules
+      description: Get Command Modules that match the provided query.
+      operationId: getCommandModules
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CommandModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+  '/interface-modules/monitor-modules/{monitorModuleID}':
+    parameters:
+      - in: path
+        name: monitorModuleID
+        description: ID of the targeted Monitor Module.
+        required: true
+        type: string
+    get:
+      tags:
+        - Monitor Modules
+      summary: GET Monitor Module
+      description: Get a Monitor Module by the Monitor Module ID.
+      operationId: getMonitorModule
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/MonitorModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+  /interface-modules/monitor-modules/:
+    parameters:
+      - in: query
+        name: monitorModuleID
+        description: ID of the targeted Monitor Module.
+        type: string
+      - in: query
+        name: monitorModuleSlugs
+        description: Slugs of the targeted Monitor Modules.
+        type: string
+      - in: query
+        name: commandNodeCompatible
+        description: Whether the targeted Monitor Modules are Command Node Compatible.
+        type: boolean
+    get:
+      tags:
+        - Monitor Modules
+      summary: GET Monitor Modules
+      description: Get Monitor Modules that match the provided query.
+      operationId: getMonitorModules
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MonitorModule'
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+  /logs:
+    parameters:
+      - in: query
+        name: logID
+        description: ID of the targeted Log.
+        type: string
+    get:
+      tags:
+        - Logs
+      summary: GET Logs
+      description: Get Logs that match the provided query.
+      operationId: getLogs
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Log'
+        '500':
+          description: Server Error
+definitions:
+  CommandModule:
+    type: object
+    properties:
+      commandModuleID:
+        description: ID of the Command Module.
+        type: string
+        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+      commandModuleName:
+        description: Name of the Command Module.
+        type: string
+        example: Intelligent Routing
+      commandModuleSlug:
+        description: Slug of the Command Module.
+        type: string
+        example: INTELLIGENT_ROUTING
+      commandModuleEnabled:
+        description: Whether or not the Command Module is enabled.
+        type: boolean
+        example: true
+      commandModuleComponent:
+        description: Angular Component name of the Command Module.
+        type: string
+        example: IntelligentRoutingCommandModuleComponent
+      commandNodeCompatible:
+        description: Whether or not the Command Module is Command Node Compatible.
+        type: boolean
+        example: true
+      commandLockEligible:
+        description: Whether or not the Command Module is Eligible for Command Lock.
+        type: boolean
+        example: true
+      featureSetID:
+        description: The ID of the Feature Set that the Command Module belongs to.
+        type: string
+        example: c5fae649-5fc0-4a60-82a9-93bc4955f354
+      createdAt:
+        description: The Timestamp of the creation of the Command Module.
+        type: string
+        example: '2018-02-13 15:31:57.758'
+      updatedAt:
+        description: The Timestamp of the last update to the Command Module.
+        type: string
+        example: '2018-02-13 15:31:57.758'
+  MonitorModule:
+    type: object
+    properties:
+      monitorModuleID:
+        description: ID of the Monitor Module.
+        type: string
+        example: 167e8bd3-7de9-4138-908c-2bf07facf8dc
+      monitorModuleName:
+        description: Name of the Monitor Module.
+        type: string
+        example: Intelligent Routing
+      monitorModuleSlug:
+        description: Slug of the Monitor Module.
+        type: string
+        example: WAN_CAPACITY
+      monitorModuleEnabled:
+        description: Whether or not the Monitor Module is enabled.
+        type: boolean
+        example: true
+      monitorModuleComponent:
+        description: Angular Component name of the Monitor Module.
+        type: string
+        example: WANCapacityMonitorModuleComponent
+      commandNodeCompatible:
+        description: Whether or not the Monitor Module is Monitor Node Compatible.
+        type: boolean
+        example: true
+      commandLockEligible:
+        description: Whether or not the Monitor Module is Eligible for Monitor Lock.
+        type: boolean
+        example: true
+      featureSetID:
+        description: The ID of the Feature Set that the Monitor Module belongs to.
+        type: string
+        example: c5fae649-5fc0-4a60-82a9-93bc4955f354
+      createdAt:
+        description: The Timestamp of the creation of the Monitor Module.
+        type: string
+        example: '2018-02-13 15:31:57.758'
+      updatedAt:
+        description: The Timestamp of the last update to the Monitor Module.
+        type: string
+        example: '2018-02-13 15:31:57.758'
+  Log:
+    type: object
+    properties:
+      logID:
+        description: ID of the Log.
+        type: string
+        example: 5d62ea24-a787-45f4-840a-9696d9a2010e
+      logActorType:
+        description: Actor Type of the Log.
+        type: string
+        example: web-client
