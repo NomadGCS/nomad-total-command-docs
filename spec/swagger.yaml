@@ -19,13 +19,16 @@ info:
     [ReDoc](https://github.com/Rebilly/ReDoc) documentation engine. So beyond the standard OpenAPI syntax we use a few 
     [vendor extensions](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md).
     
-    # OpenAPI Specification
-    The goal of The OpenAPI Specification is to define a standard, language-agnostic interface to REST APIs which
-    allows both humans and computers to discover and understand the capabilities of the service without access to source
-    code, documentation, or through network traffic inspection. When properly defined via OpenAPI, a consumer can 
-    understand and interact with the remote service with a minimal amount of implementation logic. Similar to what
-    interfaces have done for lower-level programming, OpenAPI removes the guesswork in calling the service.
+    # Websockets
+    The NTC Controller uses Websockets extensively to provide real-time data regarding the state of the System, Users, and Control Systems within the vehicle. Due to its ability to use various protocols, and reconnect without user intervention, the [Socket.IO](https://socket.io/) framework is used to construct the websocket server. Clients wishing to connect to the Websockets hosted within NTC will benefit greatly from also using the [Socket.IO](https://socket.io/) framework to construct their Websocket Clients.
 
+    The Websocket Server setup by the NTC Controller follows a strict a "push only" model. This means that subscribers to the sockets can only recieve the data being transmitted over the socket, none of which is sensitive, and likewise none of which can be used to perform any Authentication/Authorization transactions within the API. The Websocket Server is not setup to allow Clients to push information of any kind, nor will it respond to information provided by Clients.
+
+    ### User Socket
+    ```
+    /users/{UserID}
+    ```
+    User Sockets are used to ........
   version: '1.0.0' # Your API version
   # It can be any string but it is better to use semantic versioning: http://semver.org/
   # Warning: OpenAPI require version to be string, but without quotation YAML can recognize it as number.
