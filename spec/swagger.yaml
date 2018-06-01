@@ -24,11 +24,33 @@ info:
 
     The Websocket Server setup by the NTC Controller follows a strict a "push only" model. This means that subscribers to the sockets can only recieve the data being transmitted over the socket, none of which is sensitive, and likewise none of which can be used to perform any Authentication/Authorization transactions within the API. The Websocket Server is not setup to allow Clients to push information of any kind, nor will it respond to information provided by Clients.
 
-    ### User Socket
+    ## Switch Socket
+    ```
+    /switch/{SocketID}
+    ```
+    Switch Sockets are designed to exist only when needed. They provide a fast, scalable, and relatively well obscured (from a security perspective) way of piping direct, time sensitive user input into the NTC Controller. The Controller uses these Sockets to observe user input such as Moment Switch depressions. These sockets are built and deployed by the NTC Controller after certain API calls have been Authenticated, Authorized, and processed then listens to the transmissions for input. Once input ceases the socket is torn down and discarded.
+
+    For the most part, these sockets are not accessible beyond being used at the time of an event such as a moment switch depression.
+
+    ## System Settings Socket
+    ```
+    /system-settings
+    ```
+    ### Message Emissions
+    `system-settings` - A compressed and formatted digest of the System Settings in their current state. This socket does not provide any means of changing the provided System Settings.
+
+    ## User Socket
     ```
     /users/{UserID}
     ```
-    User Sockets are used to ........
+    User Sockets are used to transmit useful data about individual users. These sockets are built by the NTC Controller at runtime and are maintained throughout the lifecycle of the application.
+    ### Message Emissions
+    `user-object` - The User Entity as it currently sits in the Database. This is emitted on connection, along with anytime the User Entity is updated.
+
+    `user-permissions` - The User Permissions message subject provides an array of user permissions for the owner of the User Socket. These permissions can be used to affect the display of content such as buttons and features depending on which permissions the user has. **Important Note** - Permissions are verfied at the runtime of each API Request directly from the database, so this message provides a "read-only" view into a particular User's Permissions at a given moment in time. 
+    ### Transmission Endpoints
+    `user-keepalive` - The User Keepalive endpoint allows an application to inform the NTC Controller of a User's current status. The controller will listen for User Keepalives and mark the User as "Online" until 10 seconds have elapsed from the time of the last User Keepalive. The Online Status of the User is Logged upon change, and is represented as a message accessible within the 'Users Socket'.'
+
   version: '1.0.0' # Your API version
   # It can be any string but it is better to use semantic versioning: http://semver.org/
   # Warning: OpenAPI require version to be string, but without quotation YAML can recognize it as number.
